@@ -29,7 +29,7 @@ function Home() {
           <p>{event.date}</p>
           <p>{event.location}</p>
           <p>${event.price}</p>
-          <Link to={`/event/${event.id}`}>FIND TICKETS</Link>
+          <Link to={`/events/${event.id}`}>FIND TICKETS</Link>
         </div>
       ))}
     </>

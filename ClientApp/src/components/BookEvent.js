@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 function BookEvent() {
   const { eventId } = useParams();
   const [event, setEvent] = useState({});
   const [loading, setLoading] = useState(true);
+  const [ticketCount, setTicketCount] = useState(1);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getEvent = async () => {
@@ -22,6 +24,38 @@ function BookEvent() {
     getEvent();
   }, [eventId]);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const response = await fetch('/api/order', {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        'eventId': eventId,
+        'ticketCount': ticketCount
+      })
+    });
+
+    if (!response.ok) {
+      alert(`Error: ${response.status} - ${response.statusText}`);
+      return;
+    }
+
+    const data = await response.json();
+    navigate(`/orders/${data.id}`);
+  };
+
+  function decrementTicketCount() {
+    if (ticketCount > 0) {
+      setTicketCount(ticketCount - 1);
+    }
+  }
+
+  function incrementTicketCount() {
+    if (ticketCount < 10) {
+      setTicketCount(ticketCount + 1);
+    }
+  }
+
   const contents = loading ? (
     <div>
       <p>
@@ -37,16 +71,23 @@ function BookEvent() {
         <li>{event.location}</li>
         <li>${event.price}</li>
       </ul>
-      <button>BOOK NOW</button>
+      <button onClick={decrementTicketCount} disabled={ticketCount === 1}>-</button>
+      <span> {ticketCount} </span>
+      <button onClick={incrementTicketCount} disabled={ticketCount === 10}>+</button>
+      <br />
+      <br />
+      <button onClick={handleSubmit}>BOOK TICKETS</button>
     </div>
   );
 
   return (
     <div>
+      {contents}
       <div>
+        <hr />
+        <em>Visual representation of seating plan</em>
         <img src={"./sampleseatingmap.png"} alt={"Sample seating plan"} />
       </div>
-      {contents}
     </div>
   );
 };
