@@ -31,7 +31,14 @@ public class Section
 
 public class Seat
 {
+    public Seat()
+    {
+        FirstName = LastName = "";
+    }
+
     public int Id { get; set; }
     public bool Booked { get; set; }
     public int Price { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
 }

@@ -28,15 +28,6 @@ public static class OrderService
     {
         order.Code = RandomString(10);
         order.Id = nextId++;
-        int total = 0;
-        foreach (Section section in order.SeatingSections)
-        {
-            foreach (Seat seat in section.Seats)
-            {
-                total += seat.Price;
-            }
-        }
-        order.TotalPrice = total;
         orders.Add(order);
     }
 

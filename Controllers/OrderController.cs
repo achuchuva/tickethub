@@ -33,7 +33,7 @@ public class OrderController : ControllerBase
     public IActionResult Create(Order order)
     {
         OrderService.Add(order);
-        BookingService.Update(order.EventId, order.TicketCount);
+        BookingService.Update(order.EventId, order.TicketCount, order.FirstName, order.LastName);
         SeatService.UpdateFullyBooked(order.EventId);
         return CreatedAtAction(nameof(Get), new { id = order.Id }, order);
     }

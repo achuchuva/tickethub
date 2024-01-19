@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import BookConfirmation from './BookConfirmation';
 
 function BookEvent() {
   const { eventId } = useParams();
@@ -7,7 +8,8 @@ function BookEvent() {
   const [loading, setLoading] = useState(true);
   const [ticketCount, setTicketCount] = useState(1);
   const [seatingSections, setSeatingSections] = useState([]);
-  const navigate = useNavigate();
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [hasBooked, setBooked] = useState(false);
 
   useEffect(() => {
     const getEvent = async () => {
@@ -30,7 +32,6 @@ function BookEvent() {
       try {
         const response = await fetch(`api/seat?eventId=${eventId}&seatsCount=${ticketCount}`);
         const data = await response.json();
-        console.log(data);
         setSeatingSections(data);
       } catch (error) {
         console.error('Error fetching event:', error);
@@ -40,34 +41,23 @@ function BookEvent() {
     updateSeatList();
   }, [ticketCount, eventId]);
 
-  const handleSubmit = async (e) => {
+  function handleSubmit(e) {
     e.preventDefault();
     if (seatingSections.length === 0) {
       alert(`You cannot book ${ticketCount} tickets. Please select another quantity.`);
       return;
     }
-    if (!window.confirm(`Do you confirm the purchase of ${ticketCount} tickets?`)) {
-      return;
-    }
 
-    const response = await fetch('/api/order', {
-      method: 'post',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        'eventId': eventId,
-        'ticketCount': ticketCount,
-        'seatingSections': seatingSections
-      })
+    let price = 0;
+    seatingSections.forEach((section) => {
+      section.seats.forEach((seat) => {
+        price += seat.price;
+      });
     });
 
-    if (!response.ok) {
-      alert(`Error: ${response.status} - ${response.statusText}`);
-      return;
-    }
-
-    const data = await response.json();
-    navigate(`/orders/${data.id}`);
-  };
+    setTotalPrice(price);
+    setBooked(true);
+  }
 
   function decrementTicketCount() {
     if (ticketCount > 0) {
@@ -119,14 +109,22 @@ function BookEvent() {
   );
 
   return (
-    <div>
-      {contents}
-      <div>
-        <hr />
-        <em>Visual representation of seating plan</em>
-        <img src={"./sampleseatingmap.png"} alt={"Sample seating plan"} />
-      </div>
-    </div>
+    <>
+      {hasBooked ? (
+        <BookConfirmation eventId={eventId} ticketCount={ticketCount}
+          seatingSections={seatingSections} title={event.title}
+          totalPrice={totalPrice} returnToEvent={() => setBooked(false)}/>
+      ) : (
+        <div>
+          {contents}
+          <div>
+            <hr />
+            <em>Visual representation of seating plan</em>
+            <img src={"./sampleseatingmap.png"} alt={"Sample seating plan"} />
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

@@ -4,7 +4,7 @@ namespace tickethub.Services;
 
 public static class BookingService
 {
-    public static void Update(int eventId, int seatCount)
+    public static void Update(int eventId, int seatCount, string firstName, string lastName)
     {
         Event? evnt = EventService.Get(eventId);
 
@@ -19,6 +19,8 @@ public static class BookingService
                 if (!seat.Booked)
                 {
                     seat.Booked = true;
+                    seat.FirstName = firstName;
+                    seat.LastName = lastName;
                     updatedSeats++;
                     if (updatedSeats >= seatCount)
                         return;

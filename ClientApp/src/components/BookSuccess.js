@@ -32,7 +32,7 @@ function BookSuccess() {
         </div>
       ) : (
         <div>
-          <h1>Your order has been processed successfully.</h1>
+          <h1>Your order has been processed successfully, {order.firstName} {order.lastName}.</h1>
           <p>Thank you for your purchase with TicketHub.</p>
           <p>Order code: <strong>{order.code}</strong></p>
           <p>Tickets purchased: <strong>{order.ticketCount}</strong></p>
