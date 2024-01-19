@@ -8,17 +8,14 @@ public static class SeatService
     {
         Event? evnt = EventService.Get(eventId);
 
-        if (evnt?.SeatingSections is null)
-            return null;
-
-        if (evnt.IsGeneralAdmission)
+        if (evnt is null)
             return null;
 
         List<Section> seatingSection = new List<Section>();
         int seatsFound = 0;
         foreach (Section section in evnt.SeatingSections)
         {
-            if (!section.Booked && section.Seats != null)
+            if (!section.Booked)
             {
                 List<Seat> potentialSeats = new List<Seat>();
 
@@ -30,14 +27,13 @@ public static class SeatService
                         seatsFound++;
                         if (seatsFound == seatsCount)
                         {
-                            break; // Use break instead of continue to exit the inner loop
+                            break;
                         }
                     }
                 }
 
                 if (potentialSeats.Count > 0)
                 {
-                    // Add the original section with the potential seats
                     seatingSection.Add(new Section { Id = section.Id, Seats = potentialSeats });
                 }
 
@@ -53,31 +49,28 @@ public static class SeatService
 
     public static Section? GetSection(int id, int eventId)
     {
-        return EventService.Get(id)?.SeatingSections?.FirstOrDefault(s => s.Id == id);
+        return EventService.Get(id)?.SeatingSections.FirstOrDefault(s => s.Id == id);
     }
 
     public static Seat? GetSeat(int id, int sectionId, int eventId)
     {
-        return GetSection(sectionId, eventId)?.Seats?.FirstOrDefault(s => s.Id == id);
+        return GetSection(sectionId, eventId)?.Seats.FirstOrDefault(s => s.Id == id);
     }
 
     public static void UpdateFullyBooked(int eventId)
     {
         Event? evnt = EventService.Get(eventId);
 
-        if (evnt?.SeatingSections is null)
+        if (evnt is null)
             return;
 
         foreach (Section section in evnt.SeatingSections)
         {
-            if (section.Seats != null)
+            foreach (Seat seat in section.Seats)
             {
-                foreach (Seat seat in section.Seats)
+                if (!seat.Booked)
                 {
-                    if (!seat.Booked)
-                    {
-                        return;
-                    }
+                    return;
                 }
             }
 

@@ -6,7 +6,7 @@ function BookEvent() {
   const [event, setEvent] = useState({});
   const [loading, setLoading] = useState(true);
   const [ticketCount, setTicketCount] = useState(1);
-  const [seatingSection, setSeatingSection] = useState([]);
+  const [seatingSections, setSeatingSections] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,7 +30,8 @@ function BookEvent() {
       try {
         const response = await fetch(`api/seat?eventId=${eventId}&seatsCount=${ticketCount}`);
         const data = await response.json();
-        setSeatingSection(data);
+        console.log(data);
+        setSeatingSections(data);
       } catch (error) {
         console.error('Error fetching event:', error);
       }
@@ -41,16 +42,21 @@ function BookEvent() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (seatingSection.length === 0) {
+    if (seatingSections.length === 0) {
       alert(`You cannot book ${ticketCount} tickets. Please select another quantity.`);
       return;
     }
+    if (!window.confirm(`Do you confirm the purchase of ${ticketCount} tickets?`)) {
+      return;
+    }
+
     const response = await fetch('/api/order', {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         'eventId': eventId,
-        'ticketCount': ticketCount
+        'ticketCount': ticketCount,
+        'seatingSections': seatingSections
       })
     });
 
@@ -94,22 +100,20 @@ function BookEvent() {
       <span> {ticketCount} </span>
       <button onClick={incrementTicketCount} disabled={ticketCount === 10}>+</button>
       <h3>Available Tickets</h3>
-      {event.isGeneralAdmission ? (
-        <p><em>This is a general admission event</em></p>
-      ) : (
+      {
         <div>
-        <ul>
-          {seatingSection.map((section) => (
-            section.seats.map((seat) => (
-              <li key={`${section.id}-${seat.id}`}>
-                Section {section.id} - Seat {seat.id} - Price ${seat.price}
-              </li>
-            ))
-          ))}
-        </ul>
-        {seatingSection.length === 0 && <p><em>Sorry, we couldn't find any results</em></p>}
+          <ul>
+            {seatingSections.map((section) => (
+              section.seats.map((seat) => (
+                <li key={`${section.id}-${seat.id}`}>
+                  Section {section.id} - Seat {seat.id} - Price ${seat.price}
+                </li>
+              ))
+            ))}
+          </ul>
+          {seatingSections.length === 0 && <p><em>Sorry, we couldn't find any results</em></p>}
         </div>
-      )}
+      }
       <button onClick={handleSubmit}>BOOK TICKETS</button>
     </div>
   );

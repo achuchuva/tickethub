@@ -5,15 +5,12 @@ namespace tickethub.Services;
 public static class OrderService
 {
     static List<Order> orders { get; }
-    static int nextId = 2;
+    static int nextId = 1;
     private static Random random = new Random();
 
     static OrderService()
     {
-        orders = new List<Order>
-        {
-            new Order { Id = 1, EventId = 4, TicketCount = 2, Code = RandomString(10)}
-        };
+        orders = new List<Order>();
     }
 
     public static string RandomString(int length)
@@ -31,16 +28,25 @@ public static class OrderService
     {
         order.Code = RandomString(10);
         order.Id = nextId++;
+        int total = 0;
+        foreach (Section section in order.SeatingSections)
+        {
+            foreach (Seat seat in section.Seats)
+            {
+                total += seat.Price;
+            }
+        }
+        order.TotalPrice = total;
         orders.Add(order);
     }
 
     public static void Delete(int id)
     {
-        var Order = Get(id);
-        if (Order is null)
+        var order = Get(id);
+        if (order is null)
             return;
 
-        orders.Remove(Order);
+        orders.Remove(order);
     }
 
     public static void Update(Order order)

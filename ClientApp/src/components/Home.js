@@ -28,7 +28,6 @@ function Home() {
           <h2>{event.title}</h2>
           <p>{event.date}</p>
           <p>{event.location}</p>
-          <p>${event.price}</p>
           {event.isFullyBooked ? (
             <span className='button-disabled'>BOOKED OUT</span>
           ) : (

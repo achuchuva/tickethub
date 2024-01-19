@@ -36,6 +36,16 @@ function BookSuccess() {
           <p>Thank you for your purchase with TicketHub.</p>
           <p>Order code: <strong>{order.code}</strong></p>
           <p>Tickets purchased: <strong>{order.ticketCount}</strong></p>
+          <ul>
+            {order.seatingSections.map((section) => (
+              section.seats.map((seat) => (
+                <li key={`${section.id}-${seat.id}`}>
+                  Section {section.id} - Seat {seat.id} - Price ${seat.price}
+                </li>
+              ))
+            ))}
+          </ul>
+          <p>Total amount: <strong>${order.totalPrice}</strong></p>
           <Link to='/'>EXPLORE MORE EVENTS</Link>
         </div>
       )}

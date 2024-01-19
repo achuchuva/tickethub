@@ -14,17 +14,14 @@ public static class BookingService
         int updatedSeats = 0;
         foreach (Section section in evnt.SeatingSections)
         {
-            if (section.Seats != null)
+            foreach (Seat seat in section.Seats)
             {
-                foreach (Seat seat in section.Seats)
+                if (!seat.Booked)
                 {
-                    if (!seat.Booked)
-                    {
-                        seat.Booked = true;
-                        updatedSeats++;
-                        if (updatedSeats >= seatCount)
-                            return;
-                    }
+                    seat.Booked = true;
+                    updatedSeats++;
+                    if (updatedSeats >= seatCount)
+                        return;
                 }
             }
         }
