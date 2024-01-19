@@ -31,23 +31,23 @@ public class EventController : ControllerBase
 
 
     [HttpPost]
-    public IActionResult Create(Event Event)
+    public IActionResult Create(Event evnt)
     {
-        EventService.Add(Event);
-        return CreatedAtAction(nameof(Get), new { id = Event.Id }, Event);
+        EventService.Add(evnt);
+        return CreatedAtAction(nameof(Get), new { id = evnt.Id }, evnt);
     }
 
     [HttpPut("{id}")]
-    public IActionResult Update(int id, Event Event)
+    public IActionResult Update(int id, Event evnt)
     {
-        if (id != Event.Id)
+        if (id != evnt.Id)
             return BadRequest();
 
         var existingEvent = EventService.Get(id);
         if (existingEvent is null)
             return NotFound();
 
-        EventService.Update(Event);
+        EventService.Update(evnt);
 
         return NoContent();
     }

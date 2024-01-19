@@ -29,7 +29,11 @@ function Home() {
           <p>{event.date}</p>
           <p>{event.location}</p>
           <p>${event.price}</p>
-          <Link to={`/events/${event.id}`}>FIND TICKETS</Link>
+          {event.isFullyBooked ? (
+            <span className='button-disabled'>BOOKED OUT</span>
+          ) : (
+            <Link className="button-link" to={`/events/${event.id}`}>FIND TICKETS</Link>
+          )}
         </div>
       ))}
     </>

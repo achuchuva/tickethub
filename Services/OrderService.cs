@@ -4,13 +4,13 @@ namespace tickethub.Services;
 
 public static class OrderService
 {
-    static List<Order> Orders { get; }
+    static List<Order> orders { get; }
     static int nextId = 2;
     private static Random random = new Random();
 
     static OrderService()
     {
-        Orders = new List<Order>
+        orders = new List<Order>
         {
             new Order { Id = 1, EventId = 4, TicketCount = 2, Code = RandomString(10)}
         };
@@ -23,15 +23,15 @@ public static class OrderService
             .Select(s => s[random.Next(s.Length)]).ToArray());
     }
 
-    public static List<Order> GetAll() => Orders;
+    public static List<Order> GetAll() => orders;
 
-    public static Order? Get(int id) => Orders.FirstOrDefault(o => o.Id == id);
+    public static Order? Get(int id) => orders.FirstOrDefault(o => o.Id == id);
 
-    public static void Add(Order Order)
+    public static void Add(Order order)
     {
-        Order.Code = RandomString(10);
-        Order.Id = nextId++;
-        Orders.Add(Order);
+        order.Code = RandomString(10);
+        order.Id = nextId++;
+        orders.Add(order);
     }
 
     public static void Delete(int id)
@@ -40,15 +40,15 @@ public static class OrderService
         if (Order is null)
             return;
 
-        Orders.Remove(Order);
+        orders.Remove(Order);
     }
 
-    public static void Update(Order Order)
+    public static void Update(Order order)
     {
-        var index = Orders.FindIndex(o => o.Id == Order.Id);
+        var index = orders.FindIndex(o => o.Id == order.Id);
         if (index == -1)
             return;
 
-        Orders[index] = Order;
+        orders[index] = order;
     }
 }
