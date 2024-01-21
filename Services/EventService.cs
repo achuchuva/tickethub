@@ -4,12 +4,17 @@ namespace tickethub.Services;
 
 public static class EventService
 {
-    static List<Event> events { get; }
+    static List<Event> events { get; set; }
     static int nextId = 4;
     static EventService()
     {
+
+    }
+
+    public static void InitData()
+    {
         List<Section> seatings1 = new List<Section>();
-        for (int i = 1; i <= 4; i++)
+        for (int i = 1; i <= 10; i++)
         {
             List<Seat> seats = new List<Seat>();
             for (int j = 1; j <= 3; j++)
@@ -50,7 +55,7 @@ public static class EventService
                 Date = new DateOnly(2023, 1, 20).ToLongDateString(),
                 Location = "Rod Laver Arena, Melbourne, VIC",
                 Description = "Experience the magic of Rod Laver Arena, where tennis hits different! Named after Australia's Grand Slam icon, this monumental arena with 15,000 seats sets the stage for thrilling day and night sessions every day of the Australian Open.",
-                SeatingSections = seatings1
+                SeatingSections = new List<Section>()
             },
             new Event
             {
@@ -59,7 +64,7 @@ public static class EventService
                 Date = new DateOnly(2023, 1, 21).ToLongDateString(),
                 Location = "Margaret Court Arena, Melbourne, VIC",
                 Description = "With seating for 7,500 spectators, Margaret Court Arena offers a close-up view of world-class tennis. This iconic arena is where emerging talents and seasoned champions shine in both night and day sessions.",
-                SeatingSections = seatings2
+                SeatingSections = new List<Section>()
             },
             new Event
             {
@@ -68,9 +73,22 @@ public static class EventService
                 Date = new DateOnly(2023, 1, 22).ToLongDateString(),
                 Location = "John Cain Arena, Melbourne, VIC",
                 Description = "Brace yourself for electrifying vibes and an unforgettable atmosphere in John Cain Arena, aka the 'People's Court'. this 10,500-seater brings you close to big tennis stars with daily sessions until Monday 22 January.",
-                SeatingSections = seatings3
+                SeatingSections = new List<Section>()
             },
         };
+
+        using var db = new TickethubContext();
+
+        foreach (Event evnt in events)
+        {
+            db.Add(evnt);
+        }
+        db.SaveChanges();
+        Console.WriteLine("Everything worked");
+
+        var firstEvent = db.Events.OrderBy(e => e.Id).First();
+        firstEvent.Date = new DateOnly(2023, 1, 25).ToLongDateString();
+        db.SaveChanges();
     }
 
     public static List<Event> GetAll() => events;
