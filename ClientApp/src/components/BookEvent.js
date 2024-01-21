@@ -135,15 +135,18 @@ function BookEvent() {
       ) : (
         <div className="book-event">
           {!loading &&
-            <div className="seating-plan">
-              {
-                event.seatingSections.map((section) => (
-                  <>
-                    <ClickableSection key={section.id} id={section.id} openSection={(id) => setSectionId(id)} />
-                  </>
-                ))
-              }
-            </div>
+            <>
+              <div className="seating-plan">
+                <div className="stage">STAGE</div>
+                {
+                  event.seatingSections.map((section) => (
+                    <>
+                      <ClickableSection key={section.id} id={section.id} openSection={(id) => setSectionId(id)} currentId={sectionId} />
+                    </>
+                  ))
+                }
+              </div>
+            </>
           }
           {contents}
         </div>

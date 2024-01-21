@@ -1,4 +1,4 @@
-function ClickableSection({ id, openSection }) {
+function ClickableSection({ id, openSection, currentId }) {
 
   return (
     <button
@@ -7,7 +7,8 @@ function ClickableSection({ id, openSection }) {
       style={{
         position: 'relative',
         left: (id % 5) * 100 + 'px',
-        top: Math.ceil(id / 5) * 100 + 'px'
+        top: Math.ceil(id / 5) * 100 + 'px',
+        backgroundColor: currentId === id ? '#014087' : '#2189ff',
       }}>
       {id}
     </button>

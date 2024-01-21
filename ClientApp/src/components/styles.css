@@ -75,7 +75,6 @@ html {
   display: inline-block;
   width: 100px;
   height: 100px;
-  background: rgb(33, 137, 255);
   border-color: #fff;
   border-width: 2px;
   color: #fff;
@@ -83,11 +82,22 @@ html {
 }
 
 .clickable-section:hover {
-  background: rgb(1, 63, 135);
+  background: rgb(0, 53, 114) !important;
 }
 
 .clickable {
   transition: 0.3s;
+}
+
+.stage {
+  width: 400px;
+  height: 50px;
+  margin: auto;
+  margin-top: 50px;
+  text-align: center;
+  font-size: 2em;
+  background: #444444;
+  color: #fff;
 }
 
 .clickable:hover {
