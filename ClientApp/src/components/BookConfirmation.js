@@ -8,6 +8,7 @@ function BookConfirmation({ eventId, ticketCount, seatingSections, title, totalP
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
+    console.log(seatingSections);
     e.preventDefault();
     if (!window.confirm(`Do you confirm the purchase of ${ticketCount} tickets?`)) {
       return;

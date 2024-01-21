@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import BookConfirmation from './BookConfirmation';
+import ClickableSection from './ClickableSection';
 
 function BookEvent() {
   const { eventId } = useParams();
   const [event, setEvent] = useState({});
   const [loading, setLoading] = useState(true);
-  const [ticketCount, setTicketCount] = useState(1);
-  const [seatingSections, setSeatingSections] = useState([]);
+  const [ticketCount, setTicketCount] = useState(0);
+  const [potentialSeats, setPotentialSeats] = useState([]);
+  const [selectedSeats, setSelectedSeats] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [hasBooked, setBooked] = useState(false);
+  const [sectionId, setSectionId] = useState(1);
 
   useEffect(() => {
     const getEvent = async () => {
@@ -30,26 +33,25 @@ function BookEvent() {
   useEffect(() => {
     const updateSeatList = async () => {
       try {
-        const response = await fetch(`api/seat?eventId=${eventId}&seatsCount=${ticketCount}`);
+        const response = await fetch(`api/seat?eventId=${eventId}&sectionId=${sectionId}`);
         const data = await response.json();
-        setSeatingSections(data);
+        setPotentialSeats(data);
       } catch (error) {
         console.error('Error fetching event:', error);
       }
     }
 
     updateSeatList();
-  }, [ticketCount, eventId]);
+  }, [eventId, sectionId]);
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    if (seatingSections.length === 0) {
+  function handleSubmit() {
+    if (ticketCount === 0) {
       alert(`You cannot book ${ticketCount} tickets. Please select another quantity.`);
       return;
     }
 
     let price = 0;
-    seatingSections.forEach((section) => {
+    selectedSeats.forEach((section) => {
       section.seats.forEach((seat) => {
         price += seat.price;
       });
@@ -59,51 +61,67 @@ function BookEvent() {
     setBooked(true);
   }
 
-  function decrementTicketCount() {
-    if (ticketCount > 0) {
-      setTicketCount(ticketCount - 1);
-    }
-  }
+  function addSelectedSeat(seat) {
+    let newSelectedSeats = [...selectedSeats];
 
-  function incrementTicketCount() {
-    if (ticketCount < 10) {
-      setTicketCount(ticketCount + 1);
+    if (newSelectedSeats.some(obj => obj.id === sectionId)) {
+      const section = newSelectedSeats.find(obj => obj.id === sectionId);
+      if (!section.seats.some(obj => obj.id === seat.id)) {
+        section.seats.push(seat);
+        setTicketCount(prevTicketCount => prevTicketCount + 1);
+      }
+    } else {
+      const newSection = {
+        id: sectionId,
+        booked: false,
+        seats: [seat],
+      };
+
+      newSelectedSeats.push(newSection);
+      setTicketCount(prevTicketCount => prevTicketCount + 1);
     }
+    setSelectedSeats(newSelectedSeats);
   }
 
   const contents = loading ? (
-    <div>
+    <div className="booking-description">
       <p>
         <em>Loading...</em>
       </p>
     </div>
   ) : (
-    <div>
+    <div className="booking-description">
       <h1>{event.title}</h1>
       <p>{event.description}</p>
       <ul>
         <li>{event.date}</li>
         <li>{event.location}</li>
       </ul>
-      <p>Quantity</p>
-      <button onClick={decrementTicketCount} disabled={ticketCount === 1}>-</button>
-      <span> {ticketCount} </span>
-      <button onClick={incrementTicketCount} disabled={ticketCount === 10}>+</button>
-      <h3>Available Tickets</h3>
+      <h2>Section {sectionId} Tickets</h2>
+      <h3>Select Seats</h3>
       {
         <div>
           <ul>
-            {seatingSections.map((section) => (
-              section.seats.map((seat) => (
-                <li key={`${section.id}-${seat.id}`}>
-                  Section {section.id} - Seat {seat.id} - Price ${seat.price}
-                </li>
-              ))
-            ))}
+            {potentialSeats.map((seat) => (
+              <li className="clickable" onClick={() => addSelectedSeat(seat)}>
+                Seat {seat.id} - Price ${seat.price}
+              </li>
+            )
+            )}
           </ul>
-          {seatingSections.length === 0 && <p><em>Sorry, we couldn't find any results</em></p>}
+          {potentialSeats.length === 0 && <p><em>Sorry, this section is booked out</em></p>}
         </div>
       }
+      <h2>Your Selected Tickets</h2>
+      <ul>
+        {selectedSeats.map((section) => (
+          section.seats.map((seat) => (
+            <li key={`${section.id}-${seat.id}`}>
+              Section {section.id} - Seat {seat.id} - Price ${seat.price}
+            </li>
+          ))
+        ))}
+      </ul>
       <button onClick={handleSubmit}>BOOK TICKETS</button>
     </div>
   );
@@ -112,16 +130,22 @@ function BookEvent() {
     <>
       {hasBooked ? (
         <BookConfirmation eventId={eventId} ticketCount={ticketCount}
-          seatingSections={seatingSections} title={event.title}
-          totalPrice={totalPrice} returnToEvent={() => setBooked(false)}/>
+          seatingSections={selectedSeats} title={event.title}
+          totalPrice={totalPrice} returnToEvent={() => setBooked(false)} />
       ) : (
-        <div>
+        <div className="book-event">
+          {!loading &&
+            <div className="seating-plan">
+              {
+                event.seatingSections.map((section) => (
+                  <>
+                    <ClickableSection key={section.id} id={section.id} openSection={(id) => setSectionId(id)} />
+                  </>
+                ))
+              }
+            </div>
+          }
           {contents}
-          <div>
-            <hr />
-            <em>Visual representation of seating plan</em>
-            <img src={"./sampleseatingmap.png"} alt={"Sample seating plan"} />
-          </div>
         </div>
       )}
     </>

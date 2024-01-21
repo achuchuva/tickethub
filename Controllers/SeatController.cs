@@ -14,13 +14,13 @@ public class SeatController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<List<Section>> Get(int eventId, int seatsCount)
+    public ActionResult<List<Seat>> GetSeats(int eventId, int sectionId)
     {
-        List<Section>? SeatingSection = SeatService.GetSeats(eventId, seatsCount);
+        List<Seat>? seats = SeatService.GetAvailableSeats(eventId, sectionId);
 
-        if (SeatingSection == null)
+        if (seats == null)
             return NotFound();
 
-        return SeatingSection;
+        return seats;
     }
 }

@@ -4,29 +4,30 @@ namespace tickethub.Services;
 
 public static class BookingService
 {
-    public static void Update(int eventId, int seatCount, string firstName, string lastName)
+    public static void Update(Order order)
     {
-        Event? evnt = EventService.Get(eventId);
+        Event? evnt = EventService.Get(order.EventId);
 
         if (evnt?.SeatingSections is null)
             return;
 
-        int updatedSeats = 0;
-        foreach (Section section in evnt.SeatingSections)
+        foreach (Section section in order.SeatingSections)
         {
-            foreach (Seat seat in section.Seats)
+            Section? eventSection = evnt.SeatingSections.FirstOrDefault(s => s.Id == section.Id);
+            if (eventSection is not null)
             {
-                if (!seat.Booked)
+                foreach (Seat seat in eventSection.Seats)
                 {
-                    seat.Booked = true;
-                    seat.FirstName = firstName;
-                    seat.LastName = lastName;
-                    updatedSeats++;
-                    if (updatedSeats >= seatCount)
-                        return;
+                    Seat? eventSeat = section.Seats.FirstOrDefault(s => s.Id == seat.Id);
+                    if (eventSeat is not null)
+                    {
+                        seat.Booked = true;
+                        seat.FirstName = order.FirstName;
+                        seat.LastName = order.LastName;
+                        seat.Code  = order.Code;
+                    }
                 }
             }
         }
-
     }
 }

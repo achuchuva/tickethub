@@ -13,6 +13,10 @@ html {
   }
 }
 
+.container {
+  margin: 0 !important;
+}
+
 .box-shadow {
   box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
@@ -45,4 +49,48 @@ html {
 .button-link:hover {
   background-color: #0056b3;
   color: #fff !important;
+}
+
+.book-event {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 95vw;
+}
+
+.seating-plan {
+  background-color: #808080;
+  border-color: #6e6e6e;
+  height: 800px;
+  margin: 10px 5px;
+  width: 100%;
+  flex: 2;
+}
+
+.booking-description {
+  flex: 1;
+}
+
+.clickable-section {
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  background: rgb(33, 137, 255);
+  border-color: #fff;
+  border-width: 2px;
+  color: #fff;
+  font-size: 2.5em;
+}
+
+.clickable-section:hover {
+  background: rgb(1, 63, 135);
+}
+
+.clickable {
+  transition: 0.3s;
+}
+
+.clickable:hover {
+  cursor: pointer;
+  background-color: #dcdcdc;
 }

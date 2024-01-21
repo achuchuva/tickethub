@@ -33,7 +33,7 @@ public class OrderController : ControllerBase
     public IActionResult Create(Order order)
     {
         OrderService.Add(order);
-        BookingService.Update(order.EventId, order.TicketCount, order.FirstName, order.LastName);
+        BookingService.Update(order);
         SeatService.UpdateFullyBooked(order.EventId);
         return CreatedAtAction(nameof(Get), new { id = order.Id }, order);
     }
@@ -56,9 +56,9 @@ public class OrderController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        var Order = OrderService.Get(id);
+        var order = OrderService.Get(id);
 
-        if (Order is null)
+        if (order is null)
             return NotFound();
 
         OrderService.Delete(id);

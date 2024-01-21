@@ -33,7 +33,7 @@ public class Seat
 {
     public Seat()
     {
-        FirstName = LastName = "";
+        FirstName = LastName = Code = "";
     }
 
     public int Id { get; set; }
@@ -41,4 +41,5 @@ public class Seat
     public int Price { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
+    public string Code { get; set; }
 }

@@ -21,12 +21,12 @@ public class EventController : ControllerBase
     [HttpGet("{id}")]
     public ActionResult<Event> Get(int id)
     {
-        var Event = EventService.Get(id);
+        var evnt = EventService.Get(id);
 
-        if (Event == null)
+        if (evnt == null)
             return NotFound();
 
-        return Event;
+        return evnt;
     }
 
 
@@ -55,9 +55,9 @@ public class EventController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        var Event = EventService.Get(id);
+        var evnt = EventService.Get(id);
 
-        if (Event is null)
+        if (evnt is null)
             return NotFound();
 
         EventService.Delete(id);

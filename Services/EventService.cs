@@ -5,7 +5,7 @@ namespace tickethub.Services;
 public static class EventService
 {
     static List<Event> events { get; }
-    static int nextId = 5;
+    static int nextId = 4;
     static EventService()
     {
         List<Section> seatings1 = new List<Section>();
@@ -41,15 +41,6 @@ public static class EventService
             seatings3.Add(new Section { Id = i, Booked = false, Seats = seats });
         }
 
-        List<Section> seatings4 = new List<Section>();
-        List<Seat> seats4 = new List<Seat>();
-        for (int j = 1; j <= 250; j++)
-        {
-            seats4.Add(new Seat { Id = j, Booked = false, Price = 30 });
-        }
-        seatings4.Add(new Section { Id = 1, Booked = false, Seats = seats4 });
-
-
         events = new List<Event>
         {
             new Event
@@ -78,15 +69,6 @@ public static class EventService
                 Location = "John Cain Arena, Melbourne, VIC",
                 Description = "Brace yourself for electrifying vibes and an unforgettable atmosphere in John Cain Arena, aka the 'People's Court'. this 10,500-seater brings you close to big tennis stars with daily sessions until Monday 22 January.",
                 SeatingSections = seatings3
-            },
-            new Event
-            {
-                Id = 4,
-                Title = "Australia Open Ground Pass",
-                Date = new DateOnly(2023, 1, 23).ToLongDateString(),
-                Location = "Australia Open Tennis Courts, Melbourne, VIC",
-                Description = "Embark on an iconic Melbourne Park adventure with the Ground Pass! Explore the incredible world of food, beverages and entertainment on Grand Slam Oval, catch tennis up close in Kia Arena and the Western Courts, or relax while enjoying a big-screen view.",
-                SeatingSections = seatings4
             },
         };
     }
